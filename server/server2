@@ -1,0 +1,64 @@
+package main2
+
+import (
+  "io"
+  "bufio"
+	"log"
+	"net"
+  "encoding/json"
+)
+
+type session struct {
+  connection net.Conn
+  br  *bufio.Reader
+  bw  *bufio.Writer
+}
+
+type packet struct {
+  Account string `json:Account`
+  Character string `json:Character`
+  Action string `json:Action`
+}
+
+func main() {
+	server, err := net.Listen("tcp", ":2000")
+	if err != nil {
+		log.Println(err)
+	}
+
+  defer server.Close()
+
+  for {
+		conn, e := server.Accept()
+		if e != nil {
+		    log.Println(e)
+		}
+		sess := &session{
+      connection: conn,
+      br:  bufio.NewReader(conn),
+      bw:  bufio.NewWriter(conn),
+    }
+
+		go sess.serve()
+	}
+}
+
+
+func (s *session) serve() {
+	defer s.connection.Close()
+
+
+  dec := json.NewDecoder(s.br)
+
+	for {
+    res := &packet{}
+		// sl, err := s.br.ReadSlice('\n')
+    if err := dec.Decode(&res); err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatal(err)
+		}
+
+    log.Println(res)
+	}
+}

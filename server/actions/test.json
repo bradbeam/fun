@@ -1,0 +1,12 @@
+{
+  "Source": {
+    "Account":"bob",
+    "Character":"ohai",
+    "Type": "player"
+  },
+  "Target": {
+    "Account":"",
+    "Character":"slime",
+    "Type": "monster"
+  }
+}
