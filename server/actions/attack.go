@@ -17,6 +17,10 @@ type AttackRequest struct {
   Target client.ClientData
 }
 
+type AttackResponse struct {
+  Result string "json:Result"
+}
+
 func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
     decoder := json.NewDecoder(req.Body)
     var ar AttackRequest
@@ -68,7 +72,25 @@ func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
       saveData(ar.Target, mydb)
 
     }
+
     // return results
+    if ( ar.Source.Type == "player" ) {
+        response := AttackResponse{}
+        if ( targetCharacter.Status == "dead" ) {
+          response = AttackResponse{"You won!"}
+        } else {
+          response = AttackResponse{"You lost!"}
+        }
+        results, err := json.Marshal(response)
+        if err != nil {
+          http.Error(rw, err.Error(), http.StatusInternalServerError)
+          log.Println(err.Error())
+          return
+        }
+
+        rw.Header().Set("Content-Type", "application/json")
+        rw.Write(results)
+    }
 }
 
 

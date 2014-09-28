@@ -25,7 +25,6 @@ CREATE TABLE IF NOT EXISTS fun.characters (
   UNIQUE  KEY (account_id, name )
 ) ENGINE = INNODB;
 
-
 CREATE TABLE IF NOT EXISTS fun.monsters (
   id INT NOT NULL AUTO_INCREMENT,
   name VARCHAR(64) NOT NULL,
@@ -53,7 +52,8 @@ REPLACE INTO fun.characters values
 REPLACE INTO fun.monsters values
   ( 1,'slime',1,10,0,5,10,"",0 ),
   ( 2,'imp',1,10,0,7,8,"",0 ),
-  ( 3,'goblin',1,10,0,10,5,"",0 );
+  ( 3,'goblin',1,10,0,10,5,"",0 ),
+  ( 4, 'dragon', 10, 1000, 1000, 100, 100, "", 0 );
 
 GRANT ALL ON fun.* to 'fun'@'%' IDENTIFIED BY 'Passw0rd5Suck!';
 FLUSH PRIVILEGES;
