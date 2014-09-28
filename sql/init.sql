@@ -40,14 +40,15 @@ CREATE TABLE IF NOT EXISTS fun.monsters (
 ) ENGINE = INNODB;
 
 REPLACE INTO fun.account values
-  ( 1, "bob", ""),
-  ( 2, "joe", "");
+  ( 1, "bob", "bunnies"),
+  ( 2, "joe", "unicorns");
 
 REPLACE INTO fun.characters values
   ( 1, 1, "ohai", 1, 100, 100, 5, 5, "", 0, 0, 0),
   ( 2, 1, "nohai", 1, 100, 100, 5, 5, "", 0, 0, 0),
   ( 3, 2, "fluffy", 1, 100, 100, 5, 5, "", 0, 0, 0),
-  ( 4, 1, "skittles", 1, 100, 100, 5, 5, "", 0, 0, 0);
+  ( 4, 1, "skittles", 1, 100, 100, 5, 5, "", 0, 0, 0),
+  ( 5, 2, "tootes", 1, 100, 100, 5, 5, "", 0, 0, 0);
 
 REPLACE INTO fun.monsters values
   ( 1,'slime',1,10,0,5,10,"",0 ),
