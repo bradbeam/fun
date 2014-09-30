@@ -14,12 +14,8 @@ import (
 )
 
 type AttackRequest struct {
-  Source client.ClientData
-  Target client.ClientData
-}
-
-type AttackResponse struct {
-  Result string "json:Result"
+  Source client.ClientActionRequest
+  Target client.ClientActionRequest
 }
 
 var TotalBattles = expvar.NewInt("TotalBattles")
@@ -78,11 +74,11 @@ func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
 
     // return results
     if ( ar.Source.Type == "player" ) {
-        response := AttackResponse{}
+        response := client.ClientAttackResponse{}
         if ( targetCharacter.Status == "dead" ) {
-          response = AttackResponse{"You won!"}
+          response = client.ClientAttackResponse{"You won!"}
         } else {
-          response = AttackResponse{"You lost!"}
+          response = client.ClientAttackResponse{"You lost!"}
         }
         results, err := json.Marshal(response)
         if err != nil {
@@ -97,7 +93,7 @@ func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
 }
 
 
-func loadData(character client.ClientData, mydb *sql.DB) (characters.Character, error) {
+func loadData(character client.ClientActionRequest, mydb *sql.DB) (characters.Character, error) {
   char := characters.Character{}
 
   var err error
@@ -128,7 +124,7 @@ func loadData(character client.ClientData, mydb *sql.DB) (characters.Character, 
   return char, err
 }
 
-func saveData(character client.ClientData, mydb *sql.DB) (error) {
+func saveData(character client.ClientActionRequest, mydb *sql.DB) (error) {
 
   log.Println("Saving player " + character.Character)
   stmt, err := mydb.Prepare("UPDATE fun.characters JOIN fun.account ON fun.characters.account_id = fun.account.id " +

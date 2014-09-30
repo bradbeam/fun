@@ -5,6 +5,7 @@ import (
   "net/http"
   "github.com/bradbeam/fun/config"
   "github.com/bradbeam/fun/server/actions"
+  "github.com/bradbeam/fun/server/info"
   "github.com/bradbeam/fun/fundb"
   "database/sql"
   "encoding/base64"
@@ -32,6 +33,7 @@ func Serve(configuration config.Config) {
 
     // Set up endpoints
     http.Handle("/action/attack", makeHandler(actions.Attack, mydb))
+    http.Handle("/info/account", makeHandler(info.Account, mydb))
 
     log.Fatal(http.ListenAndServe(":2000", nil))
 }
