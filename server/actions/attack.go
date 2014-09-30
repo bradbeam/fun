@@ -10,6 +10,7 @@ import (
   // "github.com/bradbeam/fun/fundb"
   "database/sql"
   "strconv"
+  "expvar"
 )
 
 type AttackRequest struct {
@@ -21,7 +22,10 @@ type AttackResponse struct {
   Result string "json:Result"
 }
 
+var TotalBattles = expvar.NewInt("TotalBattles")
+
 func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
+    TotalBattles.Add(1)
     decoder := json.NewDecoder(req.Body)
     var ar AttackRequest
     err := decoder.Decode(&ar)
@@ -65,12 +69,11 @@ func Attack(rw http.ResponseWriter, req *http.Request, mydb *sql.DB) {
     if ( ar.Source.Type == "player" ) {
       log.Println("Saving player data " + ar.Source.Character)
       saveData(ar.Source, mydb)
-
     }
+
     if ( ar.Target.Type == "player" ) {
       log.Println("Saving player data " + ar.Target.Character)
       saveData(ar.Target, mydb)
-
     }
 
     // return results

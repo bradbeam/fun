@@ -10,10 +10,17 @@ import (
   "encoding/base64"
   "strings"
   // "strconv"
+  "expvar"
 )
 
 // type Monsters []characters.Character
 // type Players  []characters.Character
+
+var (
+  FailedAuthCount = expvar.NewInt("FailedAuthCount")
+  SuccessfulAuthCount = expvar.NewInt("SuccessfulAuthCount")
+  TotalConnections = expvar.NewInt("TotalConnections")
+)
 
 func Serve(configuration config.Config) {
     mydb, err := fundb.Connect(configuration)
@@ -30,25 +37,31 @@ func Serve(configuration config.Config) {
 }
 
 // This is the fugliest function ever.
-func makeHandler(fn func(http.ResponseWriter, *http.Request, *sql.DB), mydb *sql.DB ) http.HandlerFunc {
+func makeHandler(fn func(http.ResponseWriter, *http.Request, *sql.DB), mydb *sql.DB) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+    TotalConnections.Add(1)
+
     auth := r.Header.Get("Authorization")
     if auth == "" {
       http.Error(w, "Unauthorized", http.StatusUnauthorized)
+      FailedAuthCount.Add(1)
       return
     }
 
     username, password, ok := parseBasicAuth(auth)
     if !ok {
       http.Error(w, "Unauthorized", http.StatusUnauthorized)
+      FailedAuthCount.Add(1)
       return
     }
 
     if !checkAuth(username,password,mydb) {
       http.Error(w, "Unauthorized", http.StatusUnauthorized)
+      FailedAuthCount.Add(1)
       return
     }
 
+    SuccessfulAuthCount.Add(1)
 		fn(w, r, mydb)
 	}
 }
